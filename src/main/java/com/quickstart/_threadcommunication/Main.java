@@ -31,6 +31,7 @@ class SaveThread extends Thread {
   public void run() {
     try {
       while (true) {
+        Thread.sleep(3000);
         account.save(drawAmount);
       }
     } catch (InterruptedException e) {
@@ -54,6 +55,7 @@ class DrawThread extends Thread {
   public void run() {
     try {
       while (true) {
+        Thread.sleep(3000);
         account.draw(drawAmount);
       }
     } catch (InterruptedException e) {
@@ -73,7 +75,6 @@ class Account {
   public synchronized void draw(BigDecimal drawAmount) throws InterruptedException {
     if (bal.compareTo(drawAmount) >= 0) {
       bal = bal.subtract(drawAmount);
-      Thread.sleep(1000);
       System.out.println(Thread.currentThread().getName() + "取钱成功！吐出钞票：" + drawAmount);
       this.notifyAll();
       this.wait();
@@ -88,7 +89,6 @@ class Account {
   public synchronized void save(BigDecimal saveAmount) throws InterruptedException {
     if (bal.equals(BigDecimal.valueOf(0))) {
       bal = bal.add(saveAmount);
-      Thread.sleep(1000);
       System.out.println(Thread.currentThread().getName() + "存钱成功：" + saveAmount);
       this.notifyAll();
       this.wait();

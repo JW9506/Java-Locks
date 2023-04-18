@@ -18,11 +18,16 @@ public class Main {
 }
 
 @Slf4j
-@Data
 class MyRunnable implements Runnable {
   
   // volatile private boolean flag = false;
   private boolean flag = false;
+  public boolean isFlag() {
+    return flag;
+  }
+  public void setFlag(boolean flag) {
+    this.flag = flag;
+  }
 
   @Override
   public void run() {

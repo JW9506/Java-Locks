@@ -9,9 +9,13 @@ public class Main {
     MyRunnable r = new MyRunnable();
     new Thread(r).start();
     while (true) {
-      if (r.isFlag()) {
-        log.info("main thread is over");
-        break;
+      // Fix 1
+      // Lock clears workspace memory and reloads from main memory
+      synchronized (Main.class) {
+        if (r.isFlag()) {
+          log.info("main thread is over");
+          break;
+        }
       }
     }
   }

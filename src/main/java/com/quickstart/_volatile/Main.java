@@ -24,6 +24,7 @@ public class Main {
 @Slf4j
 class MyRunnable implements Runnable {
   
+  // Fix 2
   // volatile private boolean flag = false;
   private boolean flag = false;
   public boolean isFlag() {

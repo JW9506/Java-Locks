@@ -11,3 +11,5 @@
 [Thread Communication](./src/main/java/com/quickstart/_threadcommunication/Main.java)
 
 [Volatile](./src/main/java/com/quickstart/_volatile/Main.java)
+
+[AVL Tree](./src/main/java/com/quickstart/_avltree/Main.java)

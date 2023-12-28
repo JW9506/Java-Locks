@@ -6,24 +6,35 @@ import java.util.concurrent.FutureTask;
 
 public class Main {
     public static void main(String[] args) {
-      FutureTask<String> futureTask = new FutureTask<>(new MyCallable());
-      new Thread(futureTask).start();
-      for (int i = 0; i < 10; i++) {
-        System.out.println(Thread.currentThread().getName() + " " + i);
-      }
-      try {
-        String num = futureTask.get();
-        System.out.println(num);
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
-    }
+        // Create a FutureTask that wraps a MyCallable instance
+        FutureTask<String> futureTask = new FutureTask<>(new MyCallable());
+
+        // Start a new thread with the FutureTask
+        new Thread(futureTask).start();
+
+        // Printing numbers in the main thread
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Thread.currentThread().getName() + " " + i);
+        }
+
+        try {
+            // Wait and get the result from the futureTask
+            // The main thread will block here until the result is available
+            String sum = futureTask.get();
+            System.out.println("Sum from Callable: " + sum);
+        } catch (InterruptedException e) {
+            // It's good practice to re-interrupt the thread when an InterruptedException is caught
+            Thread.currentThread().interrupt();
+            System.out.println("Thread was interrupted.");
+        } catch (ExecutionException e) {
+            System.out.println("Exception occurred in the callable task.");
+            e.printStackTrace();
+        }
     }
 }
 
-class MyCallable implements Callable<String> {
 
+class MyCallable implements Callable<String> {
     @Override
     public String call() throws Exception {
         int num = 0;
@@ -31,6 +42,7 @@ class MyCallable implements Callable<String> {
             System.out.println(Thread.currentThread().getName() + " " + i);
             num += i;
         }
-        return "" + num;
+        // Convert the sum to a string and return it
+        return String.valueOf(num);
     }
 }

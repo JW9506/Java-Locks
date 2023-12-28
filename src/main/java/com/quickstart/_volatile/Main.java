@@ -1,6 +1,5 @@
 package com.quickstart._volatile;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -9,11 +8,13 @@ public class Main {
     MyRunnable r = new MyRunnable();
     new Thread(r).start();
     while (true) {
-      // Fix 1
-      // Lock clears workspace memory and reloads from main memory
       synchronized (Main.class) {
+        // The synchronized block ensures that the reading of the flag variable
+        // happens with a happens-before relationship, providing visibility guarantees.
+        // This forces the main thread to see the most recent change made to the flag variable
+        // by any other thread (in this case, the thread running MyRunnable).
         if (r.isFlag()) {
-          log.info("main thread is over");
+          log.info("Main thread is over");
           break;
         }
       }
@@ -21,15 +22,19 @@ public class Main {
   }
 }
 
+
 @Slf4j
 class MyRunnable implements Runnable {
-  
-  // Fix 2
-  // volatile private boolean flag = false;
+
+  // The volatile keyword could have fixed the issue but it is omitted here.
+  // The synchronized block in the main method ensures visibility of changes
+  // to this flag variable across threads.
   private boolean flag = false;
+
   public boolean isFlag() {
     return flag;
   }
+
   public void setFlag(boolean flag) {
     this.flag = flag;
   }
@@ -39,10 +44,11 @@ class MyRunnable implements Runnable {
     try {
       Thread.sleep(1000);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      Thread.currentThread().interrupt();
+      log.error("Thread interrupted", e);
     }
-    
+
     setFlag(true);
-    log.info("flag: {}", flag);
+    log.info("Flag set to: {}", flag);
   }
 }

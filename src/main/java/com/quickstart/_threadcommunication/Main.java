@@ -4,15 +4,16 @@ import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 public class Main {
   public static void main(String[] args) {
     Account acc = new Account("1234567", new BigDecimal("10000"));
-    new DrawThread("甲", acc, new BigDecimal("10000")).start();
-    new DrawThread("乙", acc, new BigDecimal("10000")).start();
-    new SaveThread("父1", acc, new BigDecimal("10000")).start();
-    new SaveThread("父2", acc, new BigDecimal("10000")).start();
-    new SaveThread("父3", acc, new BigDecimal("10000")).start();
+    new DrawThread("Alice", acc, new BigDecimal("10000")).start();
+    new DrawThread("Bob", acc, new BigDecimal("10000")).start();
+    new SaveThread("Dad_01", acc, new BigDecimal("10000")).start();
+    new SaveThread("Dad_02", acc, new BigDecimal("10000")).start();
+    new SaveThread("Dad_03", acc, new BigDecimal("10000")).start();
   }
 }
 
@@ -64,6 +65,7 @@ class DrawThread extends Thread {
   }
 }
 
+@Slf4j
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -75,28 +77,26 @@ class Account {
   public synchronized void draw(BigDecimal drawAmount) throws InterruptedException {
     if (bal.compareTo(drawAmount) >= 0) {
       bal = bal.subtract(drawAmount);
-      System.out.println(Thread.currentThread().getName() + "取钱成功！吐出钞票：" + drawAmount);
+      log.info("{}: Money retrieval successful, amount: ${}. Account balance: ${}", Thread.currentThread().getName(), drawAmount, bal);
       this.notifyAll();
       this.wait();
-      System.out.println("\t余额为：" + bal);
     } else {
+      log.info("{}: Money retrieval Failed, insufficient balance", Thread.currentThread().getName());
       this.notifyAll();
       this.wait();
-      System.out.println(Thread.currentThread().getName() + "取钱失败！余额不足！");
     }
   }
 
   public synchronized void save(BigDecimal saveAmount) throws InterruptedException {
     if (bal.equals(BigDecimal.valueOf(0))) {
       bal = bal.add(saveAmount);
-      System.out.println(Thread.currentThread().getName() + "存钱成功：" + saveAmount);
+      log.info("{}: Money deposit successful, amount: ${}. Account balance: ${}", Thread.currentThread().getName(), saveAmount, bal);
       this.notifyAll();
       this.wait();
-      System.out.println("\t余额为：" + bal);
     } else {
+      log.info("{}: There is already savings, no need to deposit", Thread.currentThread().getName());
       this.notifyAll();
       this.wait();
-      System.out.println(Thread.currentThread().getName() + "发现已有存款，无需存钱！");
     }
   }
 }

@@ -5,38 +5,43 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Main {
   public static void main(String[] args) {
-    CyclicBarrier barrier = new CyclicBarrier(5, new Meeting());
-    for (int i = 1; i <= 5; i++) {
-      new Employee("Employee"+i, barrier).start();
+    final int numberOfEmployees = 5;
+    CyclicBarrier barrier = new CyclicBarrier(numberOfEmployees, new Meeting());
+
+    for (int i = 1; i <= numberOfEmployees; i++) {
+      new Employee("Employee" + i, barrier).start();
     }
   }
 }
 
+
 class Employee extends Thread {
-  
   private CyclicBarrier barrier;
+
   Employee(String name, CyclicBarrier barrier) {
     super(name);
     this.barrier = barrier;
   }
-  
+
   @Override
   public void run() {
-    System.out.println(Thread.currentThread().getName() + " is arrived");
     try {
+      System.out.println(getName() + " is arrived at the meeting.");
       barrier.await();
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      // Interrupt status should be set again when InterruptedException is caught
+      Thread.currentThread().interrupt();
+      System.out.println(getName() + " was interrupted.");
     } catch (BrokenBarrierException e) {
-      e.printStackTrace();
+      System.out.println("Barrier was broken.");
     }
   }
 }
 
-class Meeting implements Runnable {
 
+class Meeting implements Runnable {
   @Override
   public void run() {
-    System.out.println("Let's start the meeting");
+    System.out.println("All employees have arrived. Let's start the meeting.");
   }
 }

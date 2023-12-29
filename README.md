@@ -12,6 +12,8 @@
 
 [Volatile](./src/main/java/com/quickstart/_volatile/Main.java)
 
+[CountDownLatch](./src/main/java/com/quickstart/_countdownlatch/Main.java)
+
 [Java HashMap, HashTable, ConcurrentHashMap](./src/main/java/com/quickstart/_concurrentmap_vs_hashtable/Main.java)
 
 [AVL Tree](./src/main/java/com/quickstart/_avltree/Main.java)

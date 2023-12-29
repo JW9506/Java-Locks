@@ -31,6 +31,11 @@ class ThreadA extends Thread {
   @Override
   public void run() {
     System.out.println("A");
+    try {
+      countDownLatch.await();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     System.out.println("C");
   }
 }
@@ -45,5 +50,6 @@ class ThreadB extends Thread {
   @Override
   public void run() {
     System.out.println("B");
+    countDownLatch.countDown();
   }
 }

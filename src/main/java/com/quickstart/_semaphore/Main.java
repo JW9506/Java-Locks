@@ -1,18 +1,26 @@
 package com.quickstart._semaphore;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import lombok.extern.slf4j.Slf4j;
 
 public class Main {
   public static void main(String[] args) throws InterruptedException {
     // At most one thread will be able to acquire lock
-    Service service = new Service(1);
-    ThreadA threadA = new ThreadA(service);
-    ThreadB threadB = new ThreadB(service);
-    threadA.start();
-    threadB.start();
-    threadA.join();
-    threadB.join();
+    final int permits = 1;
+    final int threadCounts = 2;
+    Service service = new Service(permits);
+    List<Thread> threads = new ArrayList<>();
+    for (int i = 0; i < threadCounts; i++) {
+      threads.add(new MyThread(service));
+    }
+    for (Thread t : threads) {
+      t.start();
+    }
+    for (Thread t : threads) {
+      t.join();
+    }
   }
 }
 
@@ -41,25 +49,10 @@ class Service {
   }
 }
 
-class ThreadA extends Thread {
+class MyThread extends Thread {
 
   private Service service;
-  public ThreadA(Service service) {
-    super("ThreadA");
-    this.service = service;
-  }
-
-  @Override
-  public void run() {
-    this.service.checkout();
-  }
-}
-
-class ThreadB extends Thread {
-
-  private Service service;
-  public ThreadB(Service service) {
-    super("ThreadB");
+  public MyThread(Service service) {
     this.service = service;
   }
 

@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Semaphore permits control at most how many threads can acquire lock at the same time.
+ */
 public class Main {
   public static void main(String[] args) throws InterruptedException {
     // At most one thread will be able to acquire lock
